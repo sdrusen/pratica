@@ -6,12 +6,13 @@ import plotly.express as px
 house_file = "C:\Users\Computer\Desktop\pratica_git\pratica\housing_prices.csv"
 house_data = pd.read_csv(house_file)
 
-#Show a histogram of the distribution of floors in the dataset.
+#Show a histogram of the distribution of floors in the dataset. 
 '''fig = px.histogram(house_data["floors"], title='Logarithmic distribution of floors', labels={'Floors':'Count'}, log_y=True)
 fig.update_layout(bargap=0.2)
 fig.show()
 '''
 # Show a line plot of the average price vs the amount of floors.
+# Since plotly takes a df I have to create a new df with two columns
 df = house_data[["floors", "price"]]
 new_df = df.groupby('floors').mean()
 
