@@ -3,7 +3,7 @@ import numpy as np
 import plotly
 import plotly.express as px
 
-house_file = "housing_prices.csv"
+house_file = "C:\Users\Computer\Desktop\pratica_git\pratica\housing_prices.csv"
 house_data = pd.read_csv(house_file)
 
 #Show a histogram of the distribution of floors in the dataset.
