@@ -29,9 +29,9 @@ fig.update_layout(bargap=0.2, plot_bgcolor="white",
 
 # Show a line plot of the average price vs the amount of floors.
 # Since plotly takes a df I create a new df with two columns
-df = house_data[["floors", "price"]].groupby('floors').mean()
-prices = [[x] for x in df['price'].tolist()]
-idx = df.index.tolist()
+new_df = house_data[["floors", "price"]].groupby('floors').mean()
+prices = [[x] for x in new_df['price'].tolist()]
+idx = new_df.index.tolist()
 price_vs_floors_df = pd.DataFrame(prices, idx)
 
 fig = px.line(price_vs_floors_df, title='Houses price based on floors number', 
@@ -86,16 +86,20 @@ fig.update_layout(showlegend=False, plot_bgcolor="white",
 
 #Show a line plot with error bars (stdev) of the price vs the year built, and in the same figure, with legend, price vs year renovated.
 
-#Line plot of the price vs the year built with std
-cols1 = ["price","yr_built"]
-price_yr_built = house_data.loc[:,cols1].set_index('yr_built').sort_index()
-price_yr_built_std = price_yr_built.groupby(level=0).agg({'price':'std'})
-price_yr_built_mean = price_yr_built.groupby(level=0).mean()
+def operations(col1,col2,mean=False,std=False):
+    cols=[col1,col2]
+    df=house_data.loc[:,cols].set_index(col2).sort_index()
+    col2_mean=[]
+    col2_std=[]
+    if mean == True:
+        col2_mean=df.groupby(level=0).mean() 
+    if std == True:
+        col2_std=df.groupby(level=0).agg({'price':'std'})
+    return col2_mean,col2_std
 
-#Price vs year renovated
-cols2 = ["price","yr_renovated"]
-price_yr_renovated = house_data.loc[:,cols2].set_index('yr_renovated').sort_index()
-price_yr_renovated_mean = price_yr_renovated.groupby(level=0).mean().drop(0)
+price_yr_built_mean,price_yr_built_std=operations("price","yr_built",True,True)
+price_yr_renovated_mean,price_yr_renovated_std=operations("price","yr_renovated",True)
+
 
 fig = go.Figure()
 
@@ -110,8 +114,8 @@ fig.add_trace(go.Scatter(
     ))
 
 fig.add_trace(go.Scatter(
-    x=price_yr_renovated_mean.index.tolist(),
-    y=price_yr_renovated_mean.price.tolist(),
+    x=price_yr_renovated_mean.drop(0).index.tolist(),
+    y=price_yr_renovated_mean.drop(0).price.tolist(),
     mode="lines+markers", name="Price vs year renovated"
     ))
 
